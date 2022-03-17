@@ -7,9 +7,11 @@ import shareIcon from '../images/shareIcon.svg';
 export default function FoodsInProgress() {
   const history = useHistory();
   const { id } = useParams();
-  const { btnLike, copySuccess, setCopySuccess } = useContext(MyContext);
+  const { btnLike,
+    copySuccess,
+    setCopySuccess,
+    setButtonChecked } = useContext(MyContext);
   const [foodDetail, setFoodDetail] = useState([]);
-  // const [FoodsProgress, setFoodsProgress] = useState([]);
   const [paragraphy, setParagraphy] = useState([]);
 
   useEffect(() => {
@@ -19,24 +21,26 @@ export default function FoodsInProgress() {
         .filter((item) => item[0].includes('strIngredient'))
         .filter((item) => item[1] !== '' && item[1] !== ' ' && item[1] !== null)
         .map((item) => item[1]);
-      const MeasureName = Object.entries(result[0])
-        .filter((item) => item[0].includes('strMeasure'))
-        .filter((item) => item[1] !== '' && item[1] !== ' ' && item[1] !== null)
-        .map((item) => item[1]);
-        // || item[0].includes('strMeasure'));
-      console.log('medidas', MeasureName);
-      console.log('ingredientes', ingredientsName);
-      // const paragraph = {
-      //   ingredientsName[index] :
-      // };
+      // const MeasureName = Object.entries(result[0])
+      //   .filter((item) => item[0].includes('strMeasure'))
+      //   .filter((item) => item[1] !== '' && item[1] !== ' ' && item[1] !== null)
+      //   .map((item) => item[1]);
+      // console.log('medidas', MeasureName);
+      // console.log('ingredientes', ingredientsName);
       setParagraphy(ingredientsName);
-      // const obj = { meals: { [id]: paragraph } };
-      // setFoodsProgress(obj);
-      // localStorage.setItem('inProgressRecipes', JSON.stringify(FoodsProgress));
+      // const obj = { meals: { [id]: paragraphy } };
+      // setFoodsProgress([...FoodsProgress, obj]);
+      // localStorage.setItem('inProgressRecipes', JSON
+      //   .stringify(FoodsProgress));
+      console.log((localStorage.getItem('inProgressRecipes')));
+      if ((localStorage.getItem('inProgressRecipes')).includes(id)) {
+        setButtonChecked(true);
+      }
       setFoodDetail(result);
     }
+
     getId();
-  }, [id]);
+  }, [id, paragraphy, setButtonChecked]);
   function copyingLink() {
     const doThis = async () => {
       await navigator.clipboard.writeText(`http://localhost:3000/foods/${id}`);
@@ -52,7 +56,6 @@ export default function FoodsInProgress() {
           className="card"
           key={ item.idMeal }
         >
-          <img src={ item.strMealThumb } alt="ImageCard" data-testid="recipe-photo" />
           <h4 data-testid="recipe-title">
             {item.strMeal}
           </h4>

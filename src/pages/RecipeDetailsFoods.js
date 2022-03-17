@@ -8,14 +8,16 @@ import shareIcon from '../images/shareIcon.svg';
 import './style/RecipeDetails.css';
 import './style/Recomend.css';
 
-function RecipeDetailsFoods() {
+export default function RecipeDetailsFoods() {
   const NUMBER_SIX = 6;
   const history = useHistory();
   const [foodDetail, setFoodDetail] = useState([]);
   const [foodRecomend, setFoodRecomend] = useState([]);
-  const [isStarted, setIsStarted] = useState(false);
+  // const [isStarted, setIsStarted] = useState(false);
   const { id } = useParams();
-  const { btnLike, copySuccess, setCopySuccess } = useContext(MyContext);
+  const { btnLike, copySuccess, setCopySuccess, buttonChecked,
+    setButtonChecked, buttonLocal,
+  } = useContext(MyContext);
   const [paragraphy, setParagraphy] = useState([]);
 
   useEffect(() => {
@@ -34,9 +36,23 @@ function RecipeDetailsFoods() {
       setFoodRecomend(filter);
       return setFoodRecomend(filter);
     }
+    if (JSON.parse(localStorage.getItem('inProgressRecipes')) !== null) {
+      if ((localStorage.getItem('inProgressRecipes')).includes(id)) {
+        setButtonChecked(true);
+      } else {
+        setButtonChecked(false);
+      }
+    }
+    //   .map((item) => item.includes(id));
     getId();
     getRecomendation();
-  }, [id]);
+  }, [id, paragraphy, buttonLocal, setButtonChecked]);
+
+  // useEffect(() => {
+  //   if (buttonLocal) {
+  //     setButtonChecked(true);
+  //   }
+  // }, []);
 
   function copyingLink() {
     const doThis = async () => {
@@ -46,10 +62,31 @@ function RecipeDetailsFoods() {
     };
     doThis();
   }
-
   function isStartedFunc() {
-    localStorage.setItem('inProgressRecipes', JSON.stringify(true));
-    setIsStarted(true);
+    const obj = [{ meals: { [id]: paragraphy } }];
+    const obj1 = { meals: { [id]: paragraphy } };
+    console.log(JSON.parse(localStorage.getItem('inProgressRecipes')));
+    if (JSON.parse(localStorage.getItem('inProgressRecipes')) !== null) {
+      console.log('storage preenchido');
+      // setButtonChecked(true);
+      // } else {
+      //   console.log('ok else');
+      //   setButtonChecked(false);
+      // }
+      const newObjt = JSON.parse(localStorage.getItem('inProgressRecipes'));
+      console.log((localStorage.getItem('inProgressRecipes')));
+      const progressRecipes = [...newObjt, obj1];
+      // const progressRecipes = [newObjt].push(obj);
+      console.log(progressRecipes);
+      localStorage.setItem('inProgressRecipes', JSON
+        .stringify(progressRecipes));
+    }
+    if (JSON.parse(localStorage.getItem('inProgressRecipes')) === null) {
+      console.log('localStorage is empty');
+      localStorage.setItem('inProgressRecipes', JSON
+        .stringify(obj));
+    }
+
     history.push(`/foods/${id}/in-progress`);
   }
 
@@ -136,11 +173,10 @@ function RecipeDetailsFoods() {
             onClick={ isStartedFunc }
             className="start_recipe_btn"
           >
-            { isStarted ? 'Continue Recipe' : 'Start Recipe' }
+            { buttonChecked ? 'Continue Recipe' : 'Start Recipe' }
           </button>
         </div>
       ))}
     </section>
   );
 }
-export default RecipeDetailsFoods;

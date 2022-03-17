@@ -23,6 +23,8 @@ function MyProvider({ children }) {
   const [isFav, setIsFav] = useState(true);
   const [copySuccess, setCopySuccess] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
+  const [buttonChecked, setButtonChecked] = useState(false);
+  const [buttonLocal, setButtonLocal] = useState(false);
   const NUMBER_SIX = 6;
   const NUMBER_ONE = 1;
   const NUMBER_TWELVE = 12;
@@ -181,6 +183,10 @@ function MyProvider({ children }) {
     setLoading,
     currentFilter,
     setCurrentFilter,
+    buttonChecked,
+    setButtonChecked,
+    buttonLocal,
+    setButtonLocal,
   };
 
   return (
